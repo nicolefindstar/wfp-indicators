@@ -7,8 +7,8 @@
 
 ** Load data
 * ---------
-	import delim using "../../Static/FCS_Sample_Survey.csv", clear 	///
-		   case(preserve) bindquotes(strict) varn(1)
+*	import delim using "../../Static/FCS_Sample_Survey.csv", clear 	///
+*		   case(preserve) bindquotes(strict) varn(1)
 
 ** Label FCS relevant variables
 	label var FCSStap		"Consumption over the past 7 days: cereals, grains and tubers"
@@ -21,10 +21,7 @@
 	label var FCSSugar		"Consumption over the past 7 days: sugaror sweets"
 	label var FCSCond		"Consumption over the past 7 days: condiments or spices"
 
-** Clean and recode missing values
-	recode FCSStap FCSVeg FCSFruit FCSPr FCSPulse FCSDairy FCSFat FCSSugar (. = 0)
-
-** Create FCS 
+** create fcs 
 	gen FCS = (FCSStap * 2) + (FCSPulse * 3) + (FCSDairy * 4) + (FCSPr * 4) + 	///
 			  (FCSVeg  * 1) + (FCSFruit * 1) + (FCSFat * 0.5) + (FCSSugar * 0.5)	  
 
