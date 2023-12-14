@@ -4,11 +4,8 @@
 
 ** Load data
 * ---------
-import delim using "../GitHub/RAMResourcesScripts/Static/rCSI_Sample_Survey.csv", ///
+*	import delim using "../GitHub/RAMResourcesScripts/Static/rCSI_Sample_Survey.csv", ///
        clear case(preserve)
-       
-** Check and recode missing values as 0
-	sum rCSI*
 	
 ** Label rCSI relevant variables
 	lab var rCSILessQlty 	"Relied on less preferred, less expensive food"

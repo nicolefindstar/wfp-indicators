@@ -15,7 +15,7 @@ library(expss)
 
 # Load Sample Data ------------------------------------------------------------#
 
-data <- read_csv("~/GitHub/RAMResourcesScripts/Static/FCSN_Sample_Survey.csv")
+# data <- read_csv("~/GitHub/RAMResourcesScripts/Static/FCSN_Sample_Survey.csv")
 
 # Label FCSN relevant variables -----------------------------------------------#
 

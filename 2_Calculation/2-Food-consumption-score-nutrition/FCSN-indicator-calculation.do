@@ -7,13 +7,8 @@
 *
 * Load data
 * ---------
-	import delim using "../GitHub/RAMResourcesScripts/Static/FCSN_Sample_Survey.csv", ///
+*	import delim using "../GitHub/RAMResourcesScripts/Static/FCSN_Sample_Survey.csv", ///
 		   clear case(preserve)
-	
-** check and recode missing values as 0
-	sum	   FCS*
-	sum	   FCSN*
-	recode FCS* (. = 0)
 
 ** assign variable labels
 	label var FCSNPrMeatF	"Consumption in past 7 days: Flesh meat"
