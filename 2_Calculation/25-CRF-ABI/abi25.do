@@ -7,8 +7,8 @@
 
 ** Load data
 * ---------
-*	import delim using "../../Static/ABI_Sample_Survey.csv", clear 	///
-*		   case(preserve) bindquotes(strict) varn(1)
+	import delim using "/Users/nicolewu/Documents/GitHub/wfp-indicators/0_Static/ABI_Sample_Survey.csv", clear 	///
+		   case(preserve) bindquotes(strict) varn(1)
 
 ** Label ABI relevant variables
 	label var HHFFAPart			"Have you or any of your household member participated in the asset creation activities and received a food assistance transfer?"
@@ -32,23 +32,26 @@
 
 * sum ABI score
 	egen ABIScore = rowtotal(HHAssetProtect HHAssetProduct HHAssetDecHardship	///
-							 HHAssetAccess HHTrainingAsset HHAssetEnv HHWorkAsset)
+							 HHAssetAccess HHTrainingAsset HHAssetEnv 			///
+							 HHWorkAsset)
 
 * create denominator of questions asked 
-data <- data %>% mutate(ABIdenom = case_when(
-  ADMIN5Name == "Community A" ~ 5,
-  ADMIN5Name == "Community B" ~ 6
-))
+	gen ABIdenom = .
+	replace ABIdenom = 5 if ADMIN5Name == "Community A"
+	replace ABIdenom = 6 if ADMIN5Name == "Community B"
 
 * create % ABI for each respondent
-data <- data %>% mutate(ABIperc = round((ABIScore/ABIdenom)*100))
+	gen ABIperc = round((ABIScore / ABIdenom) * 100)
 
 * create table comparing ABI % of participants and non-participants by village 
-ABIperc_particp_ADMIN5Name <- data %>% mutate(HHFFAPart_lab = to_character(HHFFAPart)) %>% group_by(ADMIN5Name, HHFFAPart_lab) %>% summarize(ABIperc = mean(ABIperc))
+	egen HHFFAPart_lab = group(HHFFAPart)
+	collapse (mean) ABIperc, by(ADMIN5Name HHFFAPart_lab) into ABIperc_particp_ADMIN5Name
 
-* create table presenting ABI % participants vs non-particpants (average across villages)
-ABIperc_particp <- data %>% mutate(HHFFAPart_lab = to_character(HHFFAPart)) %>% group_by(HHFFAPart_lab) %>% summarize(ABIperc = mean(ABIperc))
+* create table presenting ABI % participants vs non-participants (average across villages)
+	collapse (mean) ABIperc, by(HHFFAPart_lab) into ABIperc_particp
 
-* calculate the ABI across using weight value of 2 for non-participants which accounts for sampling imbalance between nonparticipants and participants if ratio of participants/vs non-participants is not 2/1 then a more sophisticated method for creating weights should be used.
-ABIperc_total <- ABIperc_particp %>% mutate(ABIperc_wtd = case_when(HHFFAPart_lab == "No" ~ ABIperc *2, TRUE ~ ABIperc))  %>% ungroup() %>% summarize(ABIperc_total = sum(ABIperc_wtd)/3)
-                                  
+* calculate the ABI across using weight value of 2 for non-participants
+	egen ABIperc_wtd = total(cond(HHFFAPart_lab == "No", ABIperc * 2, ABIperc))
+	gen ABIperc_total = ABIperc_wtd / 3
+
+	
